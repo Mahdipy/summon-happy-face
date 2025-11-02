@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Summon Face</title>
+<style>
+  :root {
+    --gradient: linear-gradient(135deg, #a855f7, #ff61c6, #00ffff);
+  }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 70%, #0a0730, #000);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    touch-action: manipulation; /* prevents double-tap zoom */
+  }
+
+  button {
+    padding: 1rem 2.5rem;
+    font-size: 1.4rem;
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    background: var(--gradient);
+    background-size: 300% 300%;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(255, 0, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    z-index: 5;
+  }
+
+  button:hover, button:active {
+    animation: gradientShift 3s linear infinite;
+    box-shadow: 0 0 40px rgba(255, 0, 255, 0.6);
+    transform: scale(1.05);
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .face {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.05);
+    font-size: clamp(5rem, 25vw, 12rem); /* responsive scaling */
+    opacity: 0;
+    animation: faceZoom 4s cubic-bezier(.2, .7, .3, 1) forwards;
+    will-change: transform;
+    user-select: none;
+  }
+
+  @keyframes faceZoom {
+    0%   { transform: translate(-50%, -50%) scale(0.05); opacity: 0; }
+    10%  { opacity: 1; }
+    60%  { transform: translate(-50%, -50%) scale(4); }
+    100% { transform: translate(-50%, -50%) scale(25); }
+  }
+</style>
+</head>
+<body>
+
+<button id="summonBtn">🔮 Summon Face!</button>
+
+<script>
+  const NOTIFY_URL = '/api/notify'; // works automatically on same domain
+
+  const btn = document.getElementById('summonBtn');
+  btn.addEventListener('click', () => {
+    // notify backend
+    fetch(NOTIFY_URL).catch(console.error);
+
+    // animation
+    const face = document.createElement('div');
+    face.className = 'face';
+    face.textContent = '👨‍🦱'; // any emoji you like
+    document.body.appendChild(face);
+    face.addEventListener('animationend', () => face.remove());
+  });
+</script>
+</body>
+</html>
